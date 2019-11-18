@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% endif %}
+</head>
+<body>
+
+    <h1>Bind string: {{ home_str }}</h1>
+    {% include "desc.html" %}
+    <p>Bind list value: {{ home_list[2:4] }}</p>
+    <ul>
+        {% for idx in home_list %}
+        <li>{{ idx }}</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
+
