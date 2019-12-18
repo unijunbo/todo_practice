@@ -27,7 +27,7 @@ def login():
         data = request.form.to_dict()
         sql = 'SELECT * FROM id_pw WHERE id = \'' + data['Name'] + '\' and ' + 'pw = ' + data['Password'] + ';' #로그인 정보가 맞는지 확인하는 식
         try:
-            cur.execute(sql) #위에 써준 식을 실행하는 함수
+            cur.execute(sql) #위에 써준 식을 실행하는 함수 #unique 데이터 타입이면 여기서 중복 확인하고 중복되면 에러
         except Exception:
             return 'id or password does not exist.'
         return 'Login OK.'
