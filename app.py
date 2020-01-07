@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request #플라스크 폴더에 렌더 템플릿 임포트
+from flask import Flask, render_template, request, jsonify #플라스크 폴더에 렌더 템플릿 임포트
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -23,11 +23,25 @@ def registration():
     if request.method == 'GET':
         return render_template('registration.html')
     elif request.method == 'POST':
-        data = request.form.to_dict()
+        data = request.form.to_dict() #{'Name': 'lorem', 'Password': 'ipsum'}
         user = User(data['Name'], data['Password'])
-        db.session.add(user)
-        db.session.commit()
-        return 'Registration OK'
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception:
+            return jsonify({'message': 'already exist'})
+        return jsonify({'message': 'Registration OK'})
+
+
+@app.route('/registration_check', methods=['POST'])
+def registration_check():
+    data = request.form.to_dict()
+    user_list = User.query.filter_by(username=data['Name']).all() #.all() = 필터링 하고 가져오는 조건
+    if len(user_list) >= 1:
+        return jsonify({'message': 'already exist'})
+    else:
+        return jsonify({'message': 'good'})
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

@@ -7,17 +7,51 @@
     {% if title %}
     <title>{{ title }}</title>
     {% endif %}
+    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
 </head>
 <body>
     
     <h1>회원가입</h1>
-    <form action="/registration" method="POST">
+    <div>
         <p>Name<input type="text" name="Name"></p>
+        <input id="submit-id" type="submit" value="check ID">
+        <p id="check_result"></p>
         <p>Password<input type="text" name="Password"></p>
-        <p><input type="submit" value="submit"></p>
-    </form>
-
-
+        <p><input id="submit" type="submit" value="submit"></p>
+    </div>
+    <p id="result"> not yet! </p>
+    
+    <script>
+        document.getElementById('submit-id').onclick = function() {
+            let check_id = {
+                Name: document.getElementsByName('Name')[0].value,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/registration_check',
+                dataType: 'json',
+                data: check_id,
+                success: function(res) {
+                    document.getElementById('check_result').innerText = res.message;
+                }
+            })
+        }
+        document.getElementById('submit').onclick = function() {
+            let data = {
+                Name: document.getElementsByName('Name')[0].value,
+                Password: document.getElementsByName('Password')[0].value
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/registration',
+                dataType: 'json',
+                data: data,
+                success: function(res) {
+                    document.getElementById('result').innerText = res.message;
+                }
+            })
+        }
+    </script>
 </body>
 </html>
 
