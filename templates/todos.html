@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% endif %}
+    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
+</head>
+<body>
+    <div>
+        <h1>Folder Name</h1>
+        <input type="text" name="">
+        <input id="" type="submit" value="Create List_task">
+        
+        <p>Todo</p>
+        <ul>
+            <li>
+                
+            </li>
+        </ul>
+        <input type="text" name="">
+        <input id="" type="submit" value="Add Task">
+    </div>
+    <script>
+        var pk = window.location.pathname.split('/')[2];
+        $.ajax({
+
+        })
+    </script>
+</body>
+</html>
+

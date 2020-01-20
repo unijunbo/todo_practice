@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% endif %}
+    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
+</head>
+<body>
+    <h1>List_task</h1>
+    <input type="text" id="title">
+    <input id="submit_title" type="submit" value="Create List_task">
+
+    <ul id="todo_folder-list">
+    </ul>
+
+
+
+
+    <script>
+        window.onload = function() {
+            $.ajax({
+                type: 'GET',
+                url: '/todo_folder_api',
+                dataType: 'json',
+                success: function(res) {
+                    let todoFolderEle = document.getElementById('todo_folder-list');
+                    res.forEach(function(element) {
+                        let liTag = document.createElement('li');
+                        let aTag = document.createElement('a');
+                        aTag.href = '/todo_folder/' + element.id;
+                        aTag.innerText = element.title;
+                        liTag.appendChild(aTag);
+                        todoFolderEle.appendChild(liTag);
+                    });
+                },
+                error: function(res) {
+                    console.log(res)
+                }
+            });
+        }
+
+        document.getElementById('submit_title').onclick = function() {
+            let title = {
+                title: document.getElementById('title').value
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/todo_folder_api',
+                dataType: 'json',
+                data: title,
+                success: function(res) {
+                    let todoFolderEle = document.getElementById('todo_folder-list');
+                    while (todoFolderEle.hasChildNodes())
+                        todoFolderEle.removeChild(todoFolderEle.firstChild);
+                    res.forEach(function(element) {
+                        let liTag = document.createElement('li');
+                        let aTag = document.createElement('a');
+                        aTag.href = '/todo_folder/' + element.id;
+                        aTag.innerText = element.title;
+                        liTag.appendChild(aTag);
+                        todoFolderEle.appendChild(liTag);
+                    });
+                },
+                error: function(res) {
+                    console.log(res)
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
