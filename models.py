@@ -28,10 +28,10 @@ class Todo(db.Model):
     todo_folder_id = db.Column(db.Integer, db.ForeignKey('todo_folder.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
 
-    def __init__(self, user_id, list_task_id, todo):
+    def __init__(self, user_id, todo_folder_id, content):
         self.user_id = user_id
-        self.list_task_id = list_task_id
-        self.todo = todo
+        self.todo_folder_id = todo_folder_id
+        self.content = content
     
 
 

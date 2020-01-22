@@ -11,24 +11,59 @@
 </head>
 <body>
     <div>
-        <h1>Folder Name</h1>
-        <input type="text" name="">
-        <input id="" type="submit" value="Create List_task">
-        
+        <h1 id="todo_folder_name"></h1>
         <p>Todo</p>
-        <ul>
-            <li>
-                
-            </li>
+        <ul id="todo">
         </ul>
-        <input type="text" name="">
-        <input id="" type="submit" value="Add Task">
+        <input id="todo_title" type="text" name="">
+        <input id="submit_todo" type="submit" value="Add todo">
     </div>
     <script>
         var pk = window.location.pathname.split('/')[2];
-        $.ajax({
 
-        })
+        window.onload = function() {
+            $.ajax({
+                type: 'GET',
+                url: '/todo_folder_api/' + pk,
+                dataType: 'json',
+                success: function(res) {
+                    let todoFolderNameEle = document.getElementById('todo_folder_name')
+                    todoFolderNameEle.innerText = res.todoFolderTitle
+                    let todoEle = document.getElementById('todo');
+                    res.todoList.forEach(function(element) {
+                        let liTag = document.createElement('li');
+                        let ulTag = document.getElementById('todo')
+                        liTag.innerText = element.content
+                        ulTag.appendChild(liTag);
+                    }) 
+                }
+
+            })
+        }
+
+        document.getElementById('submit_todo').onclick = function() {
+            let data = {
+                todo_title: document.getElementById('todo_title').value
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/todo_folder_api/' + pk,
+                dataType: 'json',
+                data: data,
+                success: function(res) {
+                    let todoEle = document.getElementById('todo');
+                    while (todoEle.hasChildNodes())
+                        todoEle.removeChild(todoEle.firstChild);
+
+                    res.forEach(function(element) {
+                        let liTag = document.createElement('li');
+                        let ulTag = document.getElementById('todo')
+                        liTag.innerText = element.content
+                        ulTag.appendChild(liTag);
+                    }) 
+                }
+            })
+        }
     </script>
 </body>
 </html>

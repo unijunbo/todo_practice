@@ -4,16 +4,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__, static_url_path='/static', static_folder='static') #static = javascript, css 등
-ma = Marshmallow(app)
 
 # config.py 설정파일
 app.config.from_object('config') #경로
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 from models import User, TodoFolder, Todo
-from serializers import TodoFolderSchema
+
+ma = Marshmallow(app)
+from serializers import TodoFolderSchema, TodoSchema
+
+
+
 
 test_user_id = 19 #로그인 구현 안되서 임의로 사용하는 유저 아이디
 
@@ -60,17 +63,6 @@ def login():
         else:
             return 'Login fail'
 
-@app.route('/todo_folder/<int:todo_folder_id>')
-def todos(todo_folder_id):
-    return render_template (
-        'todos.html'
-    )
-
-@app.route('/todo_folder_api/<int:todo_folder_id>', methods=['GET', 'POST'])
-def todos_api(todo_folder_id):
-    if request.method == 'GET':
-        return 'hi'
-
 
 @app.route('/todo_folder')
 def todo_folder():
@@ -101,3 +93,40 @@ def todo_folder_api():
         response_data = serializer.dump(todo_folder_list)
         return jsonify(response_data)
         
+
+#################################################
+#todo에 대한 내용
+
+@app.route('/todo_folder/<int:todo_folder_id>')
+def todos(todo_folder_id):
+    return render_template (
+        'todos.html'
+    )
+
+@app.route('/todo_folder_api/<int:todo_folder_id>', methods=['GET', 'POST'])
+def todos_api(todo_folder_id):
+    if request.method == 'GET':
+        todo_folder = TodoFolder.query.get(todo_folder_id)
+        todo_list = Todo.query.filter_by(todo_folder_id=todo_folder_id).all()
+        serializer = TodoSchema(many=True)
+        response_data = {
+            'todoFolderTitle': todo_folder.title,
+            'todoList': serializer.dump(todo_list)
+        }
+        return jsonify(response_data)
+
+    elif request.method == 'POST':
+        data = request.form.to_dict() #javascript로 만들어진 json형태의 데이터를 python 딕셔너리로 변환
+        todo_title = Todo(test_user_id, todo_folder_id, data['todo_title'])
+        try:
+            db.session.add(todo_title)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({'message': str(e)})
+        
+        todo_list = Todo.query.filter_by(todo_folder_id=todo_folder_id).all()
+        serializer = TodoSchema(many=True)
+        response_data = serializer.dump(todo_list)
+        return jsonify(response_data)
+        
+#################################################
